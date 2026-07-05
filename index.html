@@ -134,6 +134,17 @@ body {
 .hero h1 em {
   font-style: normal; color: var(--color-accent);
 }
+.hero-spring {
+  display: inline-block;
+  font-size: 1.25em;
+  color: var(--color-accent);
+  transform: translateX(12vw);
+  transition: transform .8s cubic-bezier(.34,1.56,.64,1);
+  will-change: transform;
+}
+.hero-spring.sprung {
+  transform: translateX(0);
+}
 .hero p {
   font-size: 19px; line-height: 1.5;
   color: var(--color-text-secondary); margin-bottom: 32px;
@@ -403,7 +414,7 @@ body {
 <header class="hero">
   <div class="hero-inner">
     <div class="hero-eyebrow">开源 · 免费 · 轻量</div>
-    <h1>让窗口回到<em>正确的屏幕</em>。</h1>
+    <h1>让窗口回到<br><span class="hero-spring">正确的屏幕</span></h1>
     <p>断开副屏后，窗口不再消失在看不见的地方。一键批量移动，自动屏蔽干扰，零依赖，即开即用。</p>
     <div class="hero-actions">
       <a id="btnDownload" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">
@@ -634,6 +645,25 @@ body {
   }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
   document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
+
+  // Spring animation: "正确的屏幕" slides from left-offset to center on scroll
+  var springEl = document.querySelector('.hero-spring');
+  var heroEl = document.querySelector('.hero');
+  var sprung = false;
+
+  function updateSpring() {
+    if (sprung) return;
+    var heroRect = heroEl.getBoundingClientRect();
+    var heroBottom = heroRect.bottom;
+    var triggerPoint = window.innerHeight * 0.55;
+    if (heroBottom < triggerPoint) {
+      sprung = true;
+      springEl.classList.add('sprung');
+    }
+  }
+
+  window.addEventListener('scroll', updateSpring, { passive: true });
+  updateSpring();
 })();
 </script>
 
