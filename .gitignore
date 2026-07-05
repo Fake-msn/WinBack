@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec
+dogfood-output/
+display_manager_config.json
+.vs/
+*.code-workspace
