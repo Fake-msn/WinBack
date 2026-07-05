@@ -2,513 +2,519 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DisplayWindowManager — 多显示器窗口管理工具</title>
-<meta name="description" content="一键操控多显示器窗口，轻量免费开源。支持窗口批量移动、显示器屏蔽、DPI 智能缩放、中英文界面。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=DM+Serif+Display&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>DisplayWindowManager</title>
+<meta name="description" content="一键操控多显示器窗口，轻量免费开源。">
 <style>
-:root {
-  --bg: #08080e;
-  --surface: #111118;
-  --surface-raised: #181825;
-  --border: #22223a;
-  --text: #d8d8e8;
-  --text-muted: #6a6a88;
-  --text-dim: #44445a;
-  --accent: #00e5ff;
-  --accent-dim: rgba(0,229,255,.12);
-  --accent-glow: rgba(0,229,255,.25);
-  --cta: #ff6d00;
-  --cta-hover: #ff9100;
-  --cta-glow: rgba(255,109,0,.35);
-  --danger: #ff4455;
-  --radius: 10px;
-  --radius-sm: 6px;
-  --font-display: 'DM Serif Display', 'Noto Serif SC', serif;
-  --font-body: 'DM Sans', 'Noto Sans SC', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Cascadia Code', monospace;
-  --max-w: 960px;
-}
-
+/* ── Reset & Variables ── */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 
+:root {
+  --font: -apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
+  --font-mono: 'SF Mono','Menlo','Consolas','Cascadia Code',monospace;
+  --radius: 18px;
+  --radius-sm: 12px;
+  --transition-theme: background-color .5s ease,color .5s ease,border-color .5s ease,box-shadow .5s ease;
+}
+
+/* ── Light (default) ── */
+:root {
+  --color-bg: #f5f5f7;
+  --color-surface: #ffffff;
+  --color-surface-hover: #fafafa;
+  --color-border: #d2d2d7;
+  --color-border-subtle: #e8e8ed;
+  --color-text: #1d1d1f;
+  --color-text-secondary: #86868b;
+  --color-text-tertiary: #aeaeb2;
+  --color-accent: #0071e3;
+  --color-accent-hover: #0077ed;
+  --color-accent-bg: #e8f2fd;
+  --color-hero-bg: #fbfbfd;
+  --color-code-bg: #f5f5f7;
+  --color-table-stripe: #fafafa;
+  --color-limits-bg: #fff9f0;
+  --color-limits-border: #f5d9a0;
+  --color-limits-text: #9b6a1a;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.08);
+  --shadow-btn: 0 2px 8px rgba(0,113,227,.2);
+  --shadow-btn-hover: 0 4px 16px rgba(0,113,227,.3);
+}
+
+/* ── Dark ── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #000000;
+    --color-surface: #1d1d1f;
+    --color-surface-hover: #2d2d2f;
+    --color-border: #424245;
+    --color-border-subtle: #333336;
+    --color-text: #f5f5f7;
+    --color-text-secondary: #a1a1a6;
+    --color-text-tertiary: #6e6e73;
+    --color-accent: #2997ff;
+    --color-accent-hover: #40a9ff;
+    --color-accent-bg: #1a2a3a;
+    --color-hero-bg: #000000;
+    --color-code-bg: #1d1d1f;
+    --color-table-stripe: #1a1a1c;
+    --color-limits-bg: #1a1408;
+    --color-limits-border: #3d2e0a;
+    --color-limits-text: #d4a843;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,.2);
+    --shadow-md: 0 4px 16px rgba(0,0,0,.3);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,.4);
+    --shadow-btn: 0 2px 8px rgba(41,151,255,.25);
+    --shadow-btn-hover: 0 4px 20px rgba(41,151,255,.35);
+  }
+}
+
+html { scroll-behavior: smooth; }
+
 body {
-  font-family: var(--font-body);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.65;
+  font-family: var(--font);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  transition: var(--transition-theme);
 }
 
-/* ── Background texture ── */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(0,229,255,.03) 0%, transparent 70%),
-    radial-gradient(ellipse 60% 40% at 80% 100%, rgba(255,109,0,.02) 0%, transparent 70%);
-  pointer-events: none; z-index: 0;
+/* ── Navigation ── */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--color-bg);
+  transition: var(--transition-theme);
 }
-
-.grid-overlay {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(255,255,255,.015) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.015) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 30%, transparent 70%);
+.nav-inner {
+  max-width: 1024px; margin: 0 auto;
+  padding: 12px 24px;
+  display: flex; align-items: center; justify-content: space-between;
 }
+.nav-brand {
+  font-size: 21px; font-weight: 600; letter-spacing: -.02em;
+  color: var(--color-text); text-decoration: none;
+}
+.nav-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border-radius: 24px;
+  background: var(--color-accent); color: #fff;
+  font-size: 14px; font-weight: 500; text-decoration: none;
+  transition: background .2s,transform .2s;
+}
+.nav-cta:hover { background: var(--color-accent-hover); transform: scale(1.02); }
 
 /* ── Hero ── */
 .hero {
-  position: relative; z-index: 1;
-  padding: 100px 24px 72px;
+  background: var(--color-hero-bg);
+  padding: 80px 24px 64px;
   text-align: center;
-  overflow: hidden;
+  transition: var(--transition-theme);
 }
+.hero-inner { max-width: 680px; margin: 0 auto; }
 
-.hero::after {
-  content: '';
-  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-  width: 600px; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-dim), var(--accent), var(--accent-dim), transparent);
+.hero-eyebrow {
+  font-size: 14px; font-weight: 600; letter-spacing: .04em;
+  color: var(--color-text-secondary); margin-bottom: 20px;
+  opacity: 0; animation: fadeUp .7s ease forwards;
 }
-
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  padding: 6px 16px; border-radius: 99px;
-  background: var(--accent-dim); border: 1px solid rgba(0,229,255,.2);
-  font-size: .8em; font-weight: 500; color: var(--accent);
-  letter-spacing: .04em; margin-bottom: 28px;
-  animation: fadeInUp .6s ease both;
-}
-
-.hero-badge::before {
-  content: ''; width: 7px; height: 7px; border-radius: 50%;
-  background: var(--accent); box-shadow: 0 0 8px var(--accent-glow);
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-
-@keyframes pulse-dot {
-  0%,100% { opacity: 1; }
-  50% { opacity: .4; }
-}
-
 .hero h1 {
-  font-family: var(--font-display);
-  font-size: clamp(2.2em, 5vw, 3.4em);
-  font-weight: 400; letter-spacing: -.02em;
-  line-height: 1.15; color: #fff;
-  animation: fadeInUp .6s .1s ease both;
+  font-size: clamp(40px, 6vw, 64px); font-weight: 700;
+  letter-spacing: -.03em; line-height: 1.08;
+  color: var(--color-text); margin-bottom: 20px;
+  opacity: 0; animation: fadeUp .7s .1s ease forwards;
 }
-
-.hero h1 mark {
-  background: none; color: var(--accent);
-  text-shadow: 0 0 40px var(--accent-glow);
+.hero h1 em {
+  font-style: normal; color: var(--color-accent);
 }
-
-.hero .subtitle {
-  font-size: 1.05em; color: var(--text-muted);
-  max-width: 500px; margin: 16px auto 0;
-  animation: fadeInUp .6s .2s ease both;
+.hero p {
+  font-size: 19px; line-height: 1.5;
+  color: var(--color-text-secondary); margin-bottom: 32px;
+  opacity: 0; animation: fadeUp .7s .2s ease forwards;
 }
-
-.hero .hero-actions {
-  display: flex; gap: 12px; justify-content: center;
-  flex-wrap: wrap; margin-top: 36px;
-  animation: fadeInUp .6s .3s ease both;
+.hero-actions {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .7s .3s ease forwards;
 }
-
-.hero .hero-meta {
-  display: flex; gap: 16px; justify-content: center;
-  flex-wrap: wrap; margin-top: 18px;
-  animation: fadeInUp .6s .35s ease both;
+.hero-actions .btn-primary {
+  font-size: 17px; padding: 14px 36px;
 }
-
-.hero .hero-meta span {
-  font-size: .78em; color: var(--text-dim);
-  display: flex; align-items: center; gap: 5px;
+.hero-actions .btn-secondary {
+  font-size: 17px; padding: 14px 36px;
 }
-
-.hero .hero-meta span::before {
-  content: ''; width: 4px; height: 4px; border-radius: 50%;
-  background: var(--text-dim);
+.hero-meta {
+  margin-top: 24px; font-size: 14px; color: var(--color-text-tertiary);
+  display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+  opacity: 0; animation: fadeUp .7s .35s ease forwards;
+}
+.hero-meta span { display: flex; align-items: center; gap: 6px; }
+.hero-meta span::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--color-text-tertiary);
 }
 
 /* ── Buttons ── */
 .btn {
   display: inline-flex; align-items: center; gap: 8px;
-  padding: 14px 32px; border-radius: var(--radius);
-  font-family: var(--font-body); font-size: .95em; font-weight: 600;
+  border-radius: 28px; font-family: var(--font);
+  font-weight: 500; letter-spacing: -.01em;
   text-decoration: none; cursor: pointer;
-  transition: all .25s ease; border: none; position: relative;
-  letter-spacing: .01em;
+  transition: all .25s ease; border: none;
 }
-
 .btn-primary {
-  background: var(--cta); color: #fff;
-  box-shadow: 0 0 30px var(--cta-glow), 0 4px 16px rgba(255,109,0,.25);
+  background: var(--color-accent); color: #fff;
+  box-shadow: var(--shadow-btn);
 }
 .btn-primary:hover {
-  background: var(--cta-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 0 40px var(--cta-glow), 0 8px 24px rgba(255,109,0,.3);
+  background: var(--color-accent-hover);
+  box-shadow: var(--shadow-btn-hover);
+  transform: translateY(-1px);
 }
-.btn-primary:active { transform: translateY(0); }
-
+.btn-secondary {
+  background: transparent; color: var(--color-accent);
+  border: 1.5px solid var(--color-accent);
+}
+.btn-secondary:hover {
+  background: var(--color-accent-bg);
+}
 .btn-ghost {
-  background: transparent; color: var(--text);
-  border: 1px solid var(--border); padding: 13px 31px;
+  color: var(--color-text-secondary); font-size: 14px;
+  padding: 8px 16px; border-radius: 20px;
 }
-.btn-ghost:hover {
-  background: var(--surface-raised);
-  border-color: rgba(255,255,255,.15);
-}
+.btn-ghost:hover { color: var(--color-accent); background: var(--color-accent-bg); }
 
-.btn-outline {
-  background: transparent; color: var(--accent);
-  border: 1px solid rgba(0,229,255,.25);
-}
-.btn-outline:hover {
-  background: var(--accent-dim);
-  border-color: var(--accent);
-}
-
-/* ── Container & Sections ── */
-.container {
-  max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
-  position: relative; z-index: 1;
-}
-
+/* ── Sections ── */
 .section {
-  padding: 72px 0;
-  opacity: 0; transform: translateY(24px);
-  transition: opacity .7s ease, transform .7s ease;
+  padding: 96px 24px;
+  transition: var(--transition-theme);
 }
-.section.visible { opacity: 1; transform: translateY(0); }
+.section-inner { max-width: 980px; margin: 0 auto; }
 
 .section-label {
-  font-family: var(--font-mono); font-size: .72em; font-weight: 500;
-  color: var(--accent); letter-spacing: .12em; text-transform: uppercase;
+  font-size: 13px; font-weight: 600; letter-spacing: .06em;
+  color: var(--color-text-tertiary); text-transform: uppercase;
   margin-bottom: 16px;
 }
-
-.section-title {
-  font-family: var(--font-display);
-  font-size: clamp(1.4em, 3vw, 1.8em);
-  font-weight: 400; letter-spacing: -.01em;
-  color: #fff; margin-bottom: 12px;
+.section-heading {
+  font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+  letter-spacing: -.02em; line-height: 1.2;
+  color: var(--color-text); margin-bottom: 12px;
+}
+.section-sub {
+  font-size: 17px; color: var(--color-text-secondary);
+  max-width: 560px; margin-bottom: 48px;
 }
 
-.section-desc {
-  color: var(--text-muted); font-size: .95em; max-width: 520px;
-  margin-bottom: 36px;
+/* Scroll reveal */
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity .8s ease,transform .8s ease;
 }
+.reveal.visible { opacity: 1; transform: translateY(0); }
 
-/* ── Feature Cards ── */
+/* ── Feature Grid ── */
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
 }
-
 .feature-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius);
-  padding: 28px 24px;
-  transition: all .3s ease;
-  position: relative; overflow: hidden;
-}
-.feature-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent-dim), transparent);
-  opacity: 0; transition: opacity .3s;
+  padding: 32px 28px;
+  transition: var(--transition-theme),transform .3s ease,box-shadow .3s ease;
+  box-shadow: var(--shadow-sm);
 }
 .feature-card:hover {
-  border-color: rgba(0,229,255,.2);
-  background: var(--surface-raised);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
 }
-.feature-card:hover::before { opacity: 1; }
-
 .feature-icon {
-  width: 40px; height: 40px; border-radius: var(--radius-sm);
-  background: var(--accent-dim); display: flex; align-items: center;
-  justify-content: center; margin-bottom: 16px;
-  font-size: 1.2em; color: var(--accent);
+  width: 44px; height: 44px; border-radius: 12px;
+  background: var(--color-accent-bg);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; color: var(--color-accent);
 }
-
 .feature-card h3 {
-  font-size: 1em; font-weight: 600; color: #fff; margin-bottom: 6px;
+  font-size: 19px; font-weight: 600; letter-spacing: -.01em;
+  color: var(--color-text); margin-bottom: 8px;
 }
 .feature-card p {
-  font-size: .85em; color: var(--text-muted); line-height: 1.55;
+  font-size: 15px; line-height: 1.55;
+  color: var(--color-text-secondary);
 }
 
 /* ── Quick Start ── */
-.quick-start {
-  background: var(--surface);
-  border: 1px solid var(--border);
+.quickstart {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius);
-  padding: 36px; position: relative; overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-theme);
+  overflow: hidden;
 }
-
-.quick-start .dl-row {
-  text-align: center; padding: 20px 0 28px;
-  border-bottom: 1px solid var(--border); margin-bottom: 28px;
+.quickstart-dl {
+  padding: 40px 32px; text-align: center;
+  border-bottom: 1px solid var(--color-border-subtle);
 }
-
-.quick-start .dl-row .btn {
-  font-size: 1.05em; padding: 16px 40px;
+.quickstart-dl .btn { font-size: 17px; padding: 16px 40px; }
+.quickstart-dl .hint {
+  font-size: 14px; color: var(--color-text-tertiary); margin-top: 12px;
 }
-
-.quick-start .dl-hint {
-  font-size: .78em; color: var(--text-dim); margin-top: 10px;
+.quickstart-code {
+  padding: 32px;
 }
-
-.quick-start h4 {
-  font-family: var(--font-mono); font-size: .75em; font-weight: 500;
-  color: var(--text-dim); letter-spacing: .08em; margin-bottom: 12px;
-  text-transform: uppercase;
+.quickstart-code h4 {
+  font-size: 13px; font-weight: 600; letter-spacing: .04em;
+  color: var(--color-text-tertiary); text-transform: uppercase;
+  margin-bottom: 12px; margin-top: 24px;
 }
-
+.quickstart-code h4:first-child { margin-top: 0; }
 .code-block {
-  background: #0a0a14; border: 1px solid var(--border);
-  border-radius: var(--radius-sm); padding: 16px 20px;
-  font-family: var(--font-mono); font-size: .82em;
-  color: #c8c8d8; overflow-x: auto; margin-bottom: 20px;
-  line-height: 1.7; position: relative;
+  background: var(--color-code-bg);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm); padding: 18px 22px;
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--color-text); overflow-x: auto;
+  line-height: 1.8; transition: var(--transition-theme);
+}
+.code-block .c { color: var(--color-text-tertiary); }
+.code-block .k { color: var(--color-accent); font-weight: 500; }
+.code-block .s { color: #c45a1a; }
+
+@media (prefers-color-scheme: dark) {
+  .code-block .s { color: #f0a060; }
 }
 
-.code-block .comment { color: var(--text-dim); }
-.code-block .cmd { color: var(--accent); }
-.code-block .path { color: #ffb74d; }
-
-.code-block::before {
-  content: '~';
-  position: absolute; top: 10px; right: 14px;
-  font-family: var(--font-mono); font-size: .7em;
-  color: var(--text-dim); opacity: .5;
-}
-
-/* ── Comparison Table ── */
+/* ── Table ── */
 .table-wrap {
   overflow-x: auto; border-radius: var(--radius);
-  border: 1px solid var(--border);
+  border: 1px solid var(--color-border-subtle);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-theme);
 }
-
 .table-wrap table {
   width: 100%; border-collapse: collapse;
-  font-size: .85em; background: var(--surface);
+  font-size: 15px; background: var(--color-surface);
+  transition: var(--transition-theme);
 }
-
 .table-wrap thead th {
-  background: var(--surface-raised);
-  padding: 14px 16px; text-align: center;
-  font-weight: 600; font-size: .85em; color: var(--text);
-  border-bottom: 1px solid var(--border);
-  white-space: nowrap;
+  background: var(--color-surface);
+  padding: 16px 18px; text-align: center;
+  font-weight: 600; font-size: 14px; color: var(--color-text);
+  border-bottom: 1px solid var(--color-border-subtle);
+  white-space: nowrap; transition: var(--transition-theme);
 }
 .table-wrap thead th:first-child {
-  text-align: left; color: var(--text-muted);
-  font-weight: 500; font-size: .78em; letter-spacing: .06em;
+  text-align: left; color: var(--color-text-secondary);
+  font-weight: 500; font-size: 13px; letter-spacing: .04em;
 }
-
 .table-wrap tbody td {
-  padding: 12px 16px; text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,.03);
-  color: var(--text-muted);
+  padding: 14px 18px; text-align: center;
+  border-bottom: 1px solid var(--color-border-subtle);
+  color: var(--color-text-secondary); transition: var(--transition-theme);
 }
 .table-wrap tbody td:first-child {
-  text-align: left; font-weight: 600; color: var(--text);
+  text-align: left; font-weight: 600; color: var(--color-text);
 }
-.table-wrap tbody tr:hover td {
-  background: rgba(0,229,255,.03);
-}
-.table-wrap .highlight {
-  color: var(--accent); font-weight: 600;
+.table-wrap tbody tr:last-child td { border-bottom: none; }
+.table-wrap .hi {
+  color: var(--color-accent); font-weight: 600;
 }
 
 /* ── Limits ── */
-.limits-box {
-  background: rgba(255,109,0,.06);
-  border: 1px solid rgba(255,109,0,.15);
-  border-radius: var(--radius); padding: 28px;
+.limits-card {
+  background: var(--color-limits-bg);
+  border: 1px solid var(--color-limits-border);
+  border-radius: var(--radius); padding: 28px 32px;
+  transition: var(--transition-theme);
 }
-.limits-box h3 {
-  font-size: 1em; font-weight: 600; color: var(--cta); margin-bottom: 10px;
-  display: flex; align-items: center; gap: 8px;
+.limits-card h3 {
+  font-size: 17px; font-weight: 600; color: var(--color-limits-text);
+  margin-bottom: 8px;
 }
-.limits-box h3::before {
-  content: '!'; display: flex; align-items: center; justify-content: center;
-  width: 22px; height: 22px; border-radius: 50%;
-  background: rgba(255,109,0,.2); font-size: .75em; font-weight: 700;
-  font-family: var(--font-mono);
-}
-.limits-box p {
-  font-size: .85em; color: var(--text-muted); line-height: 1.6;
+.limits-card p {
+  font-size: 15px; line-height: 1.6;
+  color: var(--color-limits-text); opacity: .85;
 }
 
 /* ── Footer ── */
 .footer {
-  padding: 48px 24px; text-align: center;
-  border-top: 1px solid var(--border);
-  position: relative; z-index: 1;
+  padding: 40px 24px; text-align: center;
+  border-top: 1px solid var(--color-border-subtle);
+  transition: var(--transition-theme);
 }
 .footer-links {
-  display: flex; gap: 24px; justify-content: center;
+  display: flex; gap: 28px; justify-content: center;
   flex-wrap: wrap; margin-bottom: 16px;
 }
 .footer-links a {
-  color: var(--text-muted); text-decoration: none;
-  font-size: .85em; transition: color .2s;
+  color: var(--color-text-secondary); text-decoration: none;
+  font-size: 14px; transition: color .2s;
 }
-.footer-links a:hover { color: var(--accent); }
-.footer-copy {
-  font-size: .75em; color: var(--text-dim);
+.footer-links a:hover { color: var(--color-accent); }
+.footer-text {
+  font-size: 13px; color: var(--color-text-tertiary);
 }
 
 /* ── Animations ── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(16px); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Responsive ── */
 @media (max-width: 640px) {
-  .hero { padding: 64px 16px 48px; }
-  .hero h1 { font-size: 1.8em; }
-  .hero .hero-actions { flex-direction: column; align-items: center; }
-  .btn { width: 100%; justify-content: center; }
-  .section { padding: 48px 0; }
-  .quick-start { padding: 24px; }
+  .hero { padding: 56px 20px 48px; }
+  .hero h1 { font-size: 36px; }
+  .hero p { font-size: 17px; }
+  .hero-actions { flex-direction: column; align-items: center; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+  .section { padding: 64px 20px; }
   .features-grid { grid-template-columns: 1fr; }
+  .quickstart-dl { padding: 28px 20px; }
+  .quickstart-code { padding: 24px 20px; }
+  .nav-inner { padding: 10px 20px; }
 }
 </style>
 </head>
 <body>
 
-<div class="grid-overlay"></div>
+<!-- ── Nav ── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">DisplayWindowManager</a>
+    <a id="navDownload" class="nav-cta" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      下载
+    </a>
+  </div>
+</nav>
 
 <!-- ── Hero ── -->
 <header class="hero">
-  <div class="hero-badge">开源免费 · MIT License</div>
-  <h1>让每一扇窗口<br>都在<mark>正确的屏幕</mark>上</h1>
-  <p class="subtitle">断开副屏后窗口不再"卡"在看不见的地方。一键批量移动，显示器屏蔽，轻量零依赖。</p>
-  <div class="hero-actions">
-    <a id="btnDownload" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      立即下载 (加载中...)
-    </a>
-    <a class="btn btn-ghost" href="https://github.com/Fake-msn/DisplayWindowManager">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
-      GitHub
-    </a>
-  </div>
-  <div class="hero-meta">
-    <span id="downloadHint">Windows 10/11 · 双击运行 · 免费开源</span>
-    <span>中/英双语</span>
-    <span>~6.6 MB</span>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">开源 · 免费 · 轻量</div>
+    <h1>让窗口回到<em>正确的屏幕</em>。</h1>
+    <p>断开副屏后，窗口不再消失在看不见的地方。一键批量移动，自动屏蔽干扰，零依赖，即开即用。</p>
+    <div class="hero-actions">
+      <a id="btnDownload" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载 DisplayWindowManager
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/Fake-msn/DisplayWindowManager">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        在 GitHub 上查看
+      </a>
+    </div>
+    <div class="hero-meta">
+      <span id="downloadHint">Windows 10/11 · 双击运行</span>
+      <span>中 / 英双语界面</span>
+      <span>~6.6 MB</span>
+    </div>
   </div>
 </header>
 
 <!-- ── Features ── -->
-<div class="container">
-  <section class="section" id="sec-features">
-    <div class="section-label">// 核心功能</div>
-    <h2 class="section-title">精准控制每一个显示器</h2>
-    <p class="section-desc">专为多显示器用户设计的轻量工具，解决远程桌面断开、副屏拔插后的窗口管理痛点。</p>
-    <div class="features-grid">
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">核心功能</div>
+    <h2 class="section-heading reveal">精准控制每一个显示器。</h2>
+    <p class="section-sub reveal">专为多显示器场景设计，解决远程桌面断开、副屏拔插后的窗口管理难题。</p>
+    <div class="features-grid reveal">
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="5 9 2 12 5 15"/><polyline points="9 5 12 2 15 5"/><polyline points="15 19 12 22 9 19"/><polyline points="19 9 22 12 19 15"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
         </div>
         <h3>一键移动窗口</h3>
-        <p>点击按钮或 Ctrl+Shift+M，所有窗口批量移至目标显示器，DPI 智能缩放自动适配</p>
+        <p>点击按钮或按 Ctrl+Shift+M，所有窗口批量移至目标显示器，DPI 自动适配。</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
         </div>
         <h3>双向移动</h3>
-        <p>副屏→主屏 / 主屏→副屏，设置中随时切换方向，灵活适配不同场景</p>
+        <p>副屏 → 主屏或主屏 → 副屏，设置中随时切换方向，灵活适配不同工作场景。</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
         </div>
         <h3>显示器屏蔽</h3>
-        <p>Ctrl+Shift+S 开关，阻止新窗口进入指定显示器，自动移走已有窗口</p>
+        <p>Ctrl+Shift+S 开关屏蔽，阻止新窗口进入指定显示器，已有窗口自动移走。</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14M5 8a2 2 0 1 1 0-4h14a2 2 0 1 1 0 4M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8m-9 4h4"/></svg>
         </div>
         <h3>多语言界面</h3>
-        <p>中/英文一键切换，语言偏好自动保存，架构可扩展更多语言</p>
+        <p>中文 / 英文一键切换，语言偏好自动保存，架构可扩展更多语言。</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="6" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         </div>
         <h3>系统托盘常驻</h3>
-        <p>最小化到托盘，右键菜单快捷操作，全局热键随时触发，安静不打扰</p>
+        <p>最小化到托盘，右键菜单快捷操作，全局热键随时触发，安静不打扰。</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
         </div>
-        <h3>零依赖单文件</h3>
-        <p>纯 Python + Win32 API，打包为 ~6.6MB 单文件 EXE，无需安装，即开即用</p>
+        <h3>零依赖，单文件</h3>
+        <p>纯 Python + Win32 API，~6.6 MB 单文件 EXE，无需安装，双击即用。</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Quick Start ── -->
-  <section class="section" id="sec-quickstart">
-    <div class="section-label">// 快速开始</div>
-    <h2 class="section-title">三种方式，即刻使用</h2>
-    <div class="quick-start">
-      <div class="dl-row">
-        <h4>方式一 · 推荐</h4>
+<!-- ── Quick Start ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">快速开始</div>
+    <h2 class="section-heading reveal">三种方式，即刻开始使用。</h2>
+    <div class="quickstart reveal">
+      <div class="quickstart-dl">
         <a id="btnDownload2" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           下载 DisplayWindowManager.exe
         </a>
-        <div class="dl-hint" id="downloadHint2">加载中...</div>
+        <div class="hint" id="downloadHint2">加载中…</div>
       </div>
+      <div class="quickstart-code">
+        <h4>从源码运行</h4>
+        <div class="code-block">
+<span class="c"># 克隆仓库</span>
+<span class="k">git clone</span> <span class="s">https://github.com/Fake-msn/DisplayWindowManager.git</span>
+<span class="k">cd</span> DisplayWindowManager
 
-      <h4>方式二 · 从源码运行</h4>
-      <div class="code-block">
-<span class="comment"># 克隆仓库</span>
-<span class="cmd">git clone</span> <span class="path">https://github.com/Fake-msn/DisplayWindowManager.git</span>
-<span class="cmd">cd</span> DisplayWindowManager
+<span class="c"># 运行（需要 Python 3.10+）</span>
+<span class="k">python</span> display_window_manager.py
+        </div>
+        <h4>自行打包</h4>
+        <div class="code-block">
+<span class="c"># 安装 PyInstaller</span>
+<span class="k">pip install</span> pyinstaller
 
-<span class="comment"># 运行（需要 Python 3.10+）</span>
-<span class="cmd">python</span> display_window_manager.py
-      </div>
-
-      <h4>方式三 · 自行打包</h4>
-      <div class="code-block">
-<span class="comment"># 安装 PyInstaller</span>
-<span class="cmd">pip install</span> pyinstaller
-
-<span class="comment"># 打包为单文件 EXE</span>
-<span class="cmd">pyinstaller --onefile --windowed --name</span> <span class="path">"DisplayWindowManager"</span> display_window_manager.py
+<span class="c"># 打包为单文件 EXE</span>
+<span class="k">pyinstaller --onefile --windowed --name</span> <span class="s">"DisplayWindowManager"</span> display_window_manager.py
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Comparison ── -->
-  <section class="section" id="sec-compare">
-    <div class="section-label">// 竞品对比</div>
-    <h2 class="section-title">为什么选择 DisplayWindowManager</h2>
-    <div class="table-wrap">
+<!-- ── Comparison ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">竞品对比</div>
+    <h2 class="section-heading reveal">轻量、免费、更懂你。</h2>
+    <div class="table-wrap reveal">
       <table>
         <thead>
           <tr>
@@ -521,37 +527,39 @@ body::before {
           </tr>
         </thead>
         <tbody>
-          <tr><td>价格</td><td class="highlight">免费</td><td>¥232 起</td><td>免费</td><td>¥430 起</td><td>免费</td></tr>
-          <tr><td>开源</td><td class="highlight">MIT</td><td>专有</td><td>MIT</td><td>专有</td><td>GPL</td></tr>
-          <tr><td>安装包</td><td class="highlight">~6.6 MB</td><td>~130 MB</td><td>~253 MB</td><td>~13 MB</td><td>~5 MB</td></tr>
-          <tr><td>一键移动</td><td class="highlight">热键+按钮</td><td>标题栏+热键</td><td>仅分区</td><td>标题栏+热键</td><td>热键</td></tr>
-          <tr><td>屏幕屏蔽</td><td class="highlight">自动移走</td><td>淡化</td><td>无</td><td>锁定</td><td>锁定</td></tr>
-          <tr><td>多语言</td><td class="highlight">中/英</td><td>部分汉化</td><td>中文</td><td>无</td><td>无</td></tr>
-          <tr><td>零安装</td><td class="highlight">单文件</td><td>需安装</td><td>需安装</td><td>需安装</td><td>绿色版</td></tr>
+          <tr><td>价格</td><td class="hi">免费</td><td>¥232 起</td><td>免费</td><td>¥430 起</td><td>免费</td></tr>
+          <tr><td>开源</td><td class="hi">MIT</td><td>专有</td><td>MIT</td><td>专有</td><td>GPL</td></tr>
+          <tr><td>安装包</td><td class="hi">~6.6 MB</td><td>~130 MB</td><td>~253 MB</td><td>~13 MB</td><td>~5 MB</td></tr>
+          <tr><td>一键移动</td><td class="hi">热键+按钮</td><td>标题栏+热键</td><td>仅分区</td><td>标题栏+热键</td><td>热键</td></tr>
+          <tr><td>屏幕屏蔽</td><td class="hi">自动移走</td><td>淡化</td><td>无</td><td>锁定</td><td>锁定</td></tr>
+          <tr><td>多语言</td><td class="hi">中/英</td><td>部分汉化</td><td>中文</td><td>无</td><td>无</td></tr>
+          <tr><td>零安装</td><td class="hi">单文件</td><td>需安装</td><td>需安装</td><td>需安装</td><td>绿色版</td></tr>
         </tbody>
       </table>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ── Limits ── -->
-  <section class="section" id="sec-limits">
-    <div class="section-label">// 已知限制</div>
-    <div class="limits-box">
+<!-- ── Limits ── -->
+<section class="section">
+  <div class="section-inner">
+    <div class="section-label reveal">已知限制</div>
+    <div class="limits-card reveal">
       <h3>系统级窗口无法移动</h3>
       <p>部分系统级窗口（任务管理器、系统设置、UAC 弹窗等）受 Windows 完整性级别隔离（UIPI）安全机制保护，无法被第三方软件移动。这是操作系统的安全设计，所有同类工具均受限。绝大多数日常应用的窗口均可正常移动。</p>
     </div>
-  </section>
-</div>
+  </div>
+</section>
 
 <!-- ── Footer ── -->
 <footer class="footer">
   <div class="footer-links">
     <a href="https://github.com/Fake-msn/DisplayWindowManager">GitHub 仓库</a>
-    <a href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">直接下载</a>
+    <a id="footerDownload" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">直接下载</a>
     <a href="https://github.com/Fake-msn/DisplayWindowManager/releases">Release 列表</a>
     <a href="https://github.com/Fake-msn/DisplayWindowManager/issues">问题反馈</a>
   </div>
-  <p class="footer-copy">MIT License · DisplayWindowManager</p>
+  <p class="footer-text">MIT License · DisplayWindowManager</p>
 </footer>
 
 <!-- ── Auto-update JS ── -->
@@ -560,31 +568,37 @@ body::before {
   var REPO = 'Fake-msn/DisplayWindowManager';
   var API = 'https://api.github.com/repos/' + REPO + '/releases/latest';
 
+  var dlIcon = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+  var navIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>';
+
   function updateUI(release) {
     var tag = release.tag_name;
-    var asset = release.assets[0];
+    var asset = release.assets && release.assets[0];
     var size = asset ? (asset.size / 1024 / 1024).toFixed(1) + ' MB' : '';
     var dl = asset ? asset.browser_download_url : release.html_url;
 
-    var btn = document.getElementById('btnDownload');
-    if (btn) {
-      btn.href = dl;
-      btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>立即下载 ' + tag + (size ? ' (' + size + ')' : '');
-    }
+    [document.getElementById('btnDownload'), document.getElementById('btnDownload2')].forEach(function(btn) {
+      if (btn) {
+        btn.href = dl;
+        btn.innerHTML = dlIcon + '下载 DisplayWindowManager' + (size ? ' (' + size + ')' : '');
+      }
+    });
+
+    [document.getElementById('navDownload'), document.getElementById('footerDownload')].forEach(function(el) {
+      if (el) el.href = dl;
+    });
 
     var hint = document.getElementById('downloadHint');
-    if (hint) hint.textContent = 'Windows 10/11 · 双击运行 · ' + tag + (size ? ' · ' + size : '');
-
-    var btn2 = document.getElementById('btnDownload2');
-    if (btn2) btn2.href = dl;
+    if (hint) hint.textContent = 'Windows 10/11 · ' + tag + (size ? ' · ' + size : '');
 
     var hint2 = document.getElementById('downloadHint2');
     if (hint2) hint2.textContent = tag + (size ? ' · ' + size + ' · ' : ' · ') + '双击运行 · Windows 10/11';
   }
 
   function fallback() {
-    var btn = document.getElementById('btnDownload');
-    if (btn) btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>立即下载 V0.52 (6.6 MB)';
+    [document.getElementById('btnDownload'), document.getElementById('btnDownload2')].forEach(function(btn) {
+      if (btn) btn.innerHTML = dlIcon + '下载 DisplayWindowManager';
+    });
     var hint = document.getElementById('downloadHint');
     if (hint) hint.textContent = 'Windows 10/11 · 双击运行 · 免费开源';
     var hint2 = document.getElementById('downloadHint2');
@@ -601,8 +615,8 @@ body::before {
         catch(e) { fallback(); }
       } else { fallback(); }
     };
-    xhr.onerror = function() { fallback(); };
-    xhr.ontimeout = function() { fallback(); };
+    xhr.onerror = fallback;
+    xhr.ontimeout = fallback;
     xhr.send();
   } catch(e) { fallback(); }
 
@@ -614,9 +628,9 @@ body::before {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.15 });
+  }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
 
-  document.querySelectorAll('.section').forEach(function(s) { observer.observe(s); });
+  document.querySelectorAll('.reveal').forEach(function(el) { observer.observe(el); });
 })();
 </script>
 
