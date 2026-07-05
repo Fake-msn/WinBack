@@ -62,10 +62,11 @@ footer a:hover{text-decoration:underline}
   <div class="badges">
     <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License">
     <img src="https://img.shields.io/badge/platform-Windows_10_11-blue" alt="Windows">
-    <img src="https://img.shields.io/badge/version-V0.52-brightgreen" alt="V0.52">
+    <img id="badgeVersion" src="https://img.shields.io/badge/version-V0.52-brightgreen" alt="版本">
     <img src="https://img.shields.io/badge/language-%E4%B8%AD%2F%E8%8B%B1-brightgreen" alt="中/英">
   </div>
-  <a class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">立即下载 V0.52 (6.6 MB)</a>
+  <a id="btnDownload" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">立即下载 (加载中...)</a>
+  <small id="downloadHint" style="color:rgba(255,255,255,.6);font-size:.8em;display:block;margin-top:8px">Windows 10/11 · 双击运行 · 免费开源</small>
   <a class="btn btn-secondary" href="https://github.com/Fake-msn/DisplayWindowManager">GitHub 仓库</a>
 </div>
 
@@ -102,8 +103,8 @@ footer a:hover{text-decoration:underline}
   <div class="quick-start">
     <p><strong>方式一：下载 EXE（推荐）</strong></p>
     <div class="download-direct">
-      <a class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">下载 DisplayWindowManager.exe</a>
-      <div class="hint">V0.52 · 6.6 MB · 双击运行 · Windows 10/11</div>
+      <a id="btnDownload2" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">下载 DisplayWindowManager.exe</a>
+      <div class="hint" id="downloadHint2">加载中...</div>
     </div>
     <p class="or">— 或从源码运行 —</p>
     <pre>git clone https://github.com/Fake-msn/DisplayWindowManager.git
@@ -138,5 +139,71 @@ pyinstaller --onefile --windowed --name "DisplayWindowManager" display_window_ma
   <p>MIT License · <a href="https://github.com/Fake-msn/DisplayWindowManager">GitHub</a> · <a href="https://github.com/Fake-msn/DisplayWindowManager/releases">Release 列表</a> · <a href="https://github.com/Fake-msn/DisplayWindowManager/issues">问题反馈</a></p>
 </footer>
 
+<script>
+(function() {
+  var REPO = 'Fake-msn/DisplayWindowManager';
+  var API = 'https://api.github.com/repos/' + REPO + '/releases/latest';
+
+  function updateUI(release) {
+    var tag = release.tag_name;
+    var asset = release.assets[0];
+    var size = asset ? (asset.size / 1024 / 1024).toFixed(1) + ' MB' : '';
+    var dl = asset ? asset.browser_download_url : release.html_url;
+
+    // 版本徽章
+    var badge = document.getElementById('badgeVersion');
+    if (badge) badge.src = 'https://img.shields.io/badge/version-' + encodeURIComponent(tag) + '-brightgreen';
+
+    // 首屏下载按钮
+    var btn = document.getElementById('btnDownload');
+    if (btn) {
+      btn.href = dl;
+      btn.textContent = '立即下载 ' + tag + (size ? ' (' + size + ')' : '');
+    }
+
+    // 首屏提示
+    var hint = document.getElementById('downloadHint');
+    if (hint) hint.textContent = 'Windows 10/11 · 双击运行 · ' + tag + (size ? ' · ' + size : '');
+
+    // 快速开始区下载按钮
+    var btn2 = document.getElementById('btnDownload2');
+    if (btn2) btn2.href = dl;
+
+    var hint2 = document.getElementById('downloadHint2');
+    if (hint2) hint2.textContent = tag + (size ? ' · ' + size + ' · ' : ' · ') + '双击运行 · Windows 10/11';
+  }
+
+  // 默认显示硬编码版本（网络失败时回退）
+  function fallback() {
+    var btn = document.getElementById('btnDownload');
+    if (btn) btn.textContent = '立即下载 V0.52 (6.6 MB)';
+    var hint = document.getElementById('downloadHint');
+    if (hint) hint.textContent = 'Windows 10/11 · 双击运行 · 免费开源';
+    var hint2 = document.getElementById('downloadHint2');
+    if (hint2) hint2.textContent = 'V0.52 · 6.6 MB · 双击运行 · Windows 10/11';
+  }
+
+  try {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', API, true);
+    xhr.timeout = 5000;
+    xhr.onload = function() {
+      if (xhr.status === 200) {
+        try {
+          var release = JSON.parse(xhr.responseText);
+          updateUI(release);
+        } catch(e) { fallback(); }
+      } else {
+        fallback();
+      }
+    };
+    xhr.onerror = function() { fallback(); };
+    xhr.ontimeout = function() { fallback(); };
+    xhr.send();
+  } catch(e) {
+    fallback();
+  }
+})();
+</script>
 </body>
 </html>
