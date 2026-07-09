@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>DisplayWindowManager</title>
+<title>WinBack - 窗归</title>
 <meta name="description" content="一键操控多显示器窗口，轻量免费开源。">
 <link rel="preload" href="assets/fonts/jiangxizhuokai-Regular.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -502,7 +502,7 @@ body {
 <!-- ── Nav ── -->
 <nav class="nav">
   <div class="nav-inner">
-    <a href="#" class="nav-brand">DisplayWindowManager</a>
+    <a href="#" class="nav-brand">WinBack</a>
     <button id="themeToggle" class="theme-toggle" aria-label="切换明暗主题" title="切换明暗主题">
       <svg class="icon-sun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
       <svg class="icon-moon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -538,7 +538,7 @@ body {
     <div class="hero-actions">
       <a id="btnDownload" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        下载 DisplayWindowManager
+        下载 WinBack
       </a>
       <a class="btn btn-secondary" href="https://github.com/Fake-msn/DisplayWindowManager">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
@@ -615,7 +615,7 @@ body {
       <div class="quickstart-dl">
         <a id="btnDownload2" class="btn btn-primary" href="https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          下载 DisplayWindowManager.exe
+          下载 WinBack.exe
         </a>
         <div class="hint" id="downloadHint2">加载中…</div>
       </div>
@@ -635,7 +635,7 @@ body {
 <span class="k">pip install</span> pyinstaller
 
 <span class="c"># 打包为单文件 EXE</span>
-<span class="k">pyinstaller --onefile --windowed --name</span> <span class="s">"DisplayWindowManager"</span> display_window_manager.py
+<span class="k">pyinstaller --onefile --windowed --name</span> <span class="s">"WinBack"</span> display_window_manager.py
         </div>
       </div>
     </div>
@@ -652,7 +652,7 @@ body {
         <thead>
           <tr>
             <th>维度</th>
-            <th>DisplayWindowManager</th>
+            <th>WinBack</th>
             <th>DisplayFusion</th>
             <th>PowerToys</th>
             <th>Actual WM</th>
@@ -692,7 +692,7 @@ body {
     <a href="https://github.com/Fake-msn/DisplayWindowManager/releases">Release 列表</a>
     <a href="https://github.com/Fake-msn/DisplayWindowManager/issues">问题反馈</a>
   </div>
-  <p class="footer-text">MIT License · DisplayWindowManager</p>
+  <p class="footer-text">MIT License · WinBack</p>
 </footer>
 
 <!-- ── Auto-update JS ── -->
@@ -774,7 +774,7 @@ body {
     [document.getElementById('btnDownload'), document.getElementById('btnDownload2')].forEach(function(btn) {
       if (btn) {
         btn.href = dl;
-        btn.innerHTML = dlIcon + '下载 DisplayWindowManager' + (size ? ' (' + size + ')' : '');
+        btn.innerHTML = dlIcon + '下载 WinBack' + (size ? ' (' + size + ')' : '');
       }
     });
 
@@ -791,7 +791,7 @@ body {
 
   function fallback() {
     [document.getElementById('btnDownload'), document.getElementById('btnDownload2')].forEach(function(btn) {
-      if (btn) btn.innerHTML = dlIcon + '下载 DisplayWindowManager';
+      if (btn) btn.innerHTML = dlIcon + '下载 WinBack';
     });
     var hint = document.getElementById('downloadHint');
     if (hint) hint.textContent = 'Windows 10/11 · 双击运行 · 免费开源';
