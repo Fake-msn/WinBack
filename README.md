@@ -1,11 +1,11 @@
-# WinBack 窗归
+﻿# WinBack 窗归
 
 > 一键操控多显示器窗口 —— 轻量、免费、开源
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows_10_11-blue)](https://www.microsoft.com/windows)
-[![Version](https://img.shields.io/badge/version-V0.53-brightgreen)](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.53/WinBack.exe)
-[![Pages](https://img.shields.io/badge/pages-%E9%A1%B9%E7%9B%AE%E4%B8%BB%E9%A1%B5-brightgreen)](https://Fake-msn.github.io/DisplayWindowManager/)
+[![Version](https://img.shields.io/badge/version-V0.53-brightgreen)](https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe)
+[![Pages](https://img.shields.io/badge/pages-%E9%A1%B9%E7%9B%AE%E4%B8%BB%E9%A1%B5-brightgreen)](https://fake-msn.github.io/WinBack/)
 
 ---
 
@@ -42,14 +42,14 @@
 
 ### 方式一：下载 EXE（推荐）
 
-[**点击直接下载 V0.53**](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.53/WinBack.exe)（6.6 MB，双击运行）
+[**点击直接下载 V0.53**](https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe)（6.6 MB，双击运行）
 
-> 国内用户如遇下载缓慢，可访问 [项目主页](https://Fake-msn.github.io/DisplayWindowManager/) 获取最新下载链接，或从 [Releases](https://github.com/Fake-msn/DisplayWindowManager/releases) 页面手动选择版本。
+> 国内用户如遇下载缓慢，可访问 [项目主页](https://fake-msn.github.io/WinBack/) 获取最新下载链接，或从 [Releases](https://github.com/Fake-msn/WinBack/releases) 页面手动选择版本。
 
 ### 方式二：从源码运行
 
 ```bash
-git clone https://github.com/Fake-msn/DisplayWindowManager.git
+git clone https://github.com/Fake-msn/WinBack.git
 cd DisplayWindowManager
 python display_window_manager.py
 ```
@@ -203,7 +203,7 @@ MIT License &copy; 2026 Fake-msn
 
 ## 链接
 
-- [项目主页 (GitHub Pages)](https://Fake-msn.github.io/DisplayWindowManager/)
-- [直接下载 V0.53](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.53/WinBack.exe)
-- [Release 列表](https://github.com/Fake-msn/DisplayWindowManager/releases)
-- [问题反馈](https://github.com/Fake-msn/DisplayWindowManager/issues)
+- [项目主页 (GitHub Pages)](https://fake-msn.github.io/WinBack/)
+- [直接下载 V0.53](https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe)
+- [Release 列表](https://github.com/Fake-msn/WinBack/releases)
+- [问题反馈](https://github.com/Fake-msn/WinBack/issues)
