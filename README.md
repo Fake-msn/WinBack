@@ -4,7 +4,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows_10_11-blue)](https://www.microsoft.com/windows)
-[![Version](https://img.shields.io/badge/version-V0.52-brightgreen)](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe)
+[![Version](https://img.shields.io/badge/version-V0.53-brightgreen)](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.53/WinBack.exe)
 [![Pages](https://img.shields.io/badge/pages-%E9%A1%B9%E7%9B%AE%E4%B8%BB%E9%A1%B5-brightgreen)](https://Fake-msn.github.io/DisplayWindowManager/)
 
 ---
@@ -42,7 +42,7 @@
 
 ### 方式一：下载 EXE（推荐）
 
-[**点击直接下载 V0.52**](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe)（6.6 MB，双击运行）
+[**点击直接下载 V0.53**](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.53/WinBack.exe)（6.6 MB，双击运行）
 
 > 国内用户如遇下载缓慢，可访问 [项目主页](https://Fake-msn.github.io/DisplayWindowManager/) 获取最新下载链接，或从 [Releases](https://github.com/Fake-msn/DisplayWindowManager/releases) 页面手动选择版本。
 
@@ -204,6 +204,6 @@ MIT License &copy; 2026 Fake-msn
 ## 链接
 
 - [项目主页 (GitHub Pages)](https://Fake-msn.github.io/DisplayWindowManager/)
-- [直接下载 V0.52](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.52/DisplayWindowManager.exe)
+- [直接下载 V0.53](https://github.com/Fake-msn/DisplayWindowManager/releases/download/V0.53/WinBack.exe)
 - [Release 列表](https://github.com/Fake-msn/DisplayWindowManager/releases)
 - [问题反馈](https://github.com/Fake-msn/DisplayWindowManager/issues)
