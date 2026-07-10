@@ -564,7 +564,7 @@ body {
       <span>~6.6 MB</span>
     </div>
     <div class="hero-meta" style="margin-top:6px;animation-delay:.4s">
-      <a id="mirrorLink" class="mirror-link" href="https://ghproxy.com/https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe">
+      <a id="mirrorLink" class="mirror-link" href="https://ghproxy.net/https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         国内镜像加速下载
       </a>
@@ -638,7 +638,7 @@ body {
         </a>
         <div class="hint" id="downloadHint2">加载中…</div>
         <div class="hint" style="margin-top:4px">
-          <a id="mirrorLink2" class="mirror-link" href="https://ghproxy.com/https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe">
+          <a id="mirrorLink2" class="mirror-link" href="https://ghproxy.net/https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             国内镜像加速下载
           </a>
@@ -716,7 +716,7 @@ body {
     <span class="mirror-divider"></span>
     <a id="footerDownload" href="https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe">直接下载</a>
     <span class="mirror-divider"></span>
-    <a id="footerMirror" class="mirror-link" href="https://ghproxy.com/https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe">国内镜像</a>
+    <a id="footerMirror" class="mirror-link" href="https://ghproxy.net/https://github.com/Fake-msn/WinBack/releases/download/V0.53/WinBack.exe">国内镜像</a>
     <span class="mirror-divider"></span>
     <a href="https://github.com/Fake-msn/WinBack/releases">Release 列表</a>
     <span class="mirror-divider"></span>
@@ -800,7 +800,7 @@ body {
     var asset = release.assets && release.assets[0];
     var size = asset ? (asset.size / 1024 / 1024).toFixed(1) + ' MB' : '';
     var dl = asset ? asset.browser_download_url : release.html_url;
-    var mirror = 'https://ghproxy.com/' + dl;
+    var mirror = 'https://ghproxy.net/' + dl;
 
     [document.getElementById('btnDownload'), document.getElementById('btnDownload2')].forEach(function(btn) {
       if (btn) {
