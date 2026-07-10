@@ -749,7 +749,6 @@ var I18N = {i18n_json};
 
 function switchLang() {
   var cur = I18N.lang_toggle === 'English' ? 'en' : 'zh';
-  window._switchingLang = true;
   fetch('/api/set-language?lang=' + cur).then(function() { location.reload(); });
 }
 
@@ -909,12 +908,6 @@ document.querySelectorAll('.radio-option').forEach(function(o) {
 
 // heartbeat
 setInterval(function() { fetch(API+'/ping').catch(function(){}); }, 5000);
-
-// notify on close
-window.addEventListener('beforeunload', function() {
-  if (window._switchingLang) return;
-  navigator.sendBeacon(API+'/quit');
-});
 
 refresh();
 </script>
